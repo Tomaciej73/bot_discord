@@ -6,13 +6,13 @@
   "type": "module",
   "scripts": {
     "start": "node index.js",
-    "dev": "node --watch index.js"
+    "dev": "node --watch index.js",
+    "check": "node --check index.js && node --check config.js && node --check notifiers/dispatcher.js && node --check notifiers/telegram.js && node --check notifiers/pushover.js && node --check notifiers/sms.js && node --check notifiers/email.js"
   },
   "dependencies": {
-    "discord.js": "^14.18.0"
-  },
-  "optionalDependencies": {
-    "nodemailer": "^6.9.16",
+    "discord.js": "^14.18.0",
+    "dotenv": "^16.4.7",
+    "nodemailer": "^9.0.3",
     "twilio": "^5.4.5"
   },
   "engines": {

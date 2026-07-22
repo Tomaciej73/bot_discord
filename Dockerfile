@@ -1,15 +1,12 @@
-# ── Stage 1: install (caches node_modules layer) ──
 FROM node:22-alpine AS deps
 WORKDIR /app
-COPY bot/package.json ./
 
-RUN npm install --omit=optional
+COPY bot/package*.json ./
+RUN npm ci --omit=dev
 
-# ── Stage 2: runtime ──
 FROM node:22-alpine
 WORKDIR /app
 
-# non-root user (security best practice)
 RUN addgroup -S bot && adduser -S bot -G bot
 USER bot
 

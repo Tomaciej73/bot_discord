@@ -1,42 +1,44 @@
 /**
- * SMS notifier — sends alerts via Twilio.
- * Docs: https://www.twilio.com/docs/messaging/api
+ * Telegram notifier.
+ * Sends alerts through Telegram Bot API using HTML formatting.
  */
 
-import {
-  TWILIO_ACCOUNT_SID,
-  TWILIO_AUTH_TOKEN,
-  TWILIO_FROM_PHONE,
-  TWILIO_TO_PHONE,
-} from '../config.js';
+import { TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID } from '../config.js';
 
-export async function sendSms(payload) {
-  if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_FROM_PHONE || !TWILIO_TO_PHONE) {
-    return { ok: false, error: 'SMS/Twilio not configured' };
+const API_BASE = 'https://api.telegram.org';
+
+export async function sendTelegram(payload) {
+  if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
+    return { ok: false, error: 'Telegram not configured' };
   }
 
-  let twilio;
-  try {
-    twilio = await import('twilio');
-  } catch {
-    return { ok: false, error: 'twilio package not installed (optional dependency)' };
-  }
-
-  const client = twilio.default(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
   const start = Date.now();
 
   try {
-    const msg = await client.messages.create({
-      body: payload.plain,
-      from: TWILIO_FROM_PHONE,
-      to: TWILIO_TO_PHONE,
+    const resp = await fetch(`${API_BASE}/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: TELEGRAM_CHAT_ID,
+        text: payload.telegram,
+        parse_mode: 'HTML',
+        disable_web_page_preview: true,
+      }),
     });
 
+    const json = await resp.json();
     const ms = Date.now() - start;
-    console.log(`[sms] Alert sent to ${TWILIO_TO_PHONE} — SID ${msg.sid} (${ms}ms)`);
-    return { ok: true, ms, sid: msg.sid };
+
+    if (!resp.ok || json.ok !== true) {
+      const msg = json.description || `HTTP ${resp.status}`;
+      console.error(`[telegram] API error (${ms}ms): ${msg}`);
+      return { ok: false, error: msg };
+    }
+
+    console.log(`[telegram] Alert sent (${ms}ms)`);
+    return { ok: true, ms };
   } catch (err) {
-    console.error(`[sms] Twilio error: ${err.message}`);
+    console.error(`[telegram] Network error: ${err.message}`);
     return { ok: false, error: err.message };
   }
 }

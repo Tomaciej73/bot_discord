@@ -1,15 +1,15 @@
 /**
- * Email notifier — sends HTML emails via SMTP using Nodemailer.
- * Works with any SMTP provider (SendGrid, Mailgun, Gmail SMTP, etc.).
+ * Email notifier.
+ * Sends HTML emails via SMTP using Nodemailer.
  */
 
 import {
-  SMTP_HOST,
-  SMTP_PORT,
-  SMTP_USER,
-  SMTP_PASS,
   SMTP_FROM,
+  SMTP_HOST,
+  SMTP_PASS,
+  SMTP_PORT,
   SMTP_TO,
+  SMTP_USER,
 } from '../config.js';
 
 export async function sendEmail(payload) {
@@ -21,7 +21,7 @@ export async function sendEmail(payload) {
   try {
     nodemailer = await import('nodemailer');
   } catch {
-    return { ok: false, error: 'nodemailer package not installed (optional dependency)' };
+    return { ok: false, error: 'nodemailer package not installed' };
   }
 
   const transporter = nodemailer.default.createTransport({
@@ -42,7 +42,7 @@ export async function sendEmail(payload) {
     });
 
     const ms = Date.now() - start;
-    console.log(`[email] Alert sent to ${SMTP_TO} — msgId ${info.messageId} (${ms}ms)`);
+    console.log(`[email] Alert sent to ${SMTP_TO} - msgId ${info.messageId} (${ms}ms)`);
     return { ok: true, ms, messageId: info.messageId };
   } catch (err) {
     console.error(`[email] SMTP error: ${err.message}`);

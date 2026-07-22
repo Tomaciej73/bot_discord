@@ -1,9 +1,9 @@
 /**
- * Pushover notifier — sends plain-text alerts via Pushover API.
- * Docs: https://pushover.net/api
+ * Pushover notifier.
+ * Sends plain-text alerts via Pushover API.
  */
 
-import { PUSHOVER_USER_KEY, PUSHOVER_APP_TOKEN } from '../config.js';
+import { PUSHOVER_APP_TOKEN, PUSHOVER_USER_KEY } from '../config.js';
 
 const API = 'https://api.pushover.net/1/messages.json';
 
@@ -13,6 +13,7 @@ export async function sendPushover(payload) {
   }
 
   const start = Date.now();
+
   try {
     const resp = await fetch(API, {
       method: 'POST',
@@ -22,7 +23,7 @@ export async function sendPushover(payload) {
         user: PUSHOVER_USER_KEY,
         message: payload.plain,
         title: payload.subject,
-        priority: 0,  // normal priority
+        priority: 0,
       }),
     });
 
