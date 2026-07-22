@@ -1,0 +1,15 @@
+services:
+  discord-watchdog:
+    build: .
+    container_name: discord-watchdog
+    restart: unless-stopped
+    env_file:
+      - .env
+    # Optional — mount a custom config file if you prefer file-based config
+    # volumes:
+    #   - ./config.yml:/app/config.yml:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

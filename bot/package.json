@@ -1,0 +1,21 @@
+{
+  "name": "discord-watchdog-alerts",
+  "version": "1.0.0",
+  "description": "Monitor Discord server activity and send instant alerts via Telegram, Pushover, SMS, or email.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.18.0"
+  },
+  "optionalDependencies": {
+    "nodemailer": "^6.9.16",
+    "twilio": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
